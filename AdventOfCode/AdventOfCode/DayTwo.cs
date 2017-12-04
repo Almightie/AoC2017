@@ -61,5 +61,40 @@ namespace AdventOfCode
             }
             return sum;
         }
+
+        public int GetDeviseableNumber(string row)
+        {
+            string[] parts = row.Split(';');
+            List<int> list = new List<int>();
+            for (int i = 0; i < parts.Length; i++)
+            {
+                list.Add(Convert.ToInt32(parts[i]));
+            }
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                for (int j = 0; j < list.Count; j++)
+                {
+                    if (i != j)
+                    {
+                        if (list[i] % list[j] == 0)
+                        {
+                            return list[i] / list[j];
+                        } 
+                    }
+                }
+            }
+            return 0;
+        }
+
+        public int SumOfRowsPartTwo(string[] rows)
+        {
+            int sum = 0;
+            for (int i = 0; i < rows.Length; i++)
+            {
+                sum += GetDeviseableNumber(rows[i]);
+            }
+            return sum;
+        }
     }
 }
