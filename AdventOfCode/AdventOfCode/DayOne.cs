@@ -21,6 +21,11 @@ namespace AdventOfCode
             _nextFree = (_nextFree + 1) % _buffer.Length;
         }
 
+        public void Set(int index, T value)
+        {
+            _buffer[index % _buffer.Length] = value;
+        }
+
         public T Get(int index)
         {
             int actualIndex = index % _buffer.Length;
