@@ -32,7 +32,7 @@ namespace AdventOfCodeTests
         }
 
         [TestMethod]
-        public void PartTwpExampleOne()
+        public void PartTwoExampleOne()
         {
             int[] startArray = new[] { 0, 2, 7, 0 };
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace AdventOfCode
 {
@@ -7,49 +6,29 @@ namespace AdventOfCode
     {
         private CircularBuffer<int> _circularBuffer;
         private Dictionary<string, int> _memoryDumps;
-
-        public DaySix()
-        {
-            
-        }
+        private string _lastMemoryDump;
 
         public int RearrangeMemory(int[] array)
         {
             _memoryDumps = new Dictionary<string, int>();
             SetupBuffer(array);
 
-
-            string memoryDump = MemoryDump();
+            _lastMemoryDump = MemoryDump();
             int i = 0;
-            while (!_memoryDumps.ContainsKey(memoryDump))
+            while (!_memoryDumps.ContainsKey(_lastMemoryDump))
             {
-                _memoryDumps.Add(memoryDump, 1);
+                _memoryDumps.Add(_lastMemoryDump, i);
                 DoRearrange();
+                _lastMemoryDump = MemoryDump();
                 i++;
-                memoryDump = MemoryDump();
             }
             return i;
         }
 
         public int RearrangeMemoryPartTwo(int[] array)
         {
-            _memoryDumps = new Dictionary<string, int>();
-            SetupBuffer(array);
-
-
-            string memoryDump = MemoryDump();
-            int i = 0;
-            while (!_memoryDumps.ContainsKey(memoryDump))
-            {
-                _memoryDumps.Add(memoryDump, i);
-                DoRearrange();
-                i++;
-                memoryDump = MemoryDump();
-            }
-
-            return i - _memoryDumps[memoryDump];
+            return RearrangeMemory(array) - _memoryDumps[_lastMemoryDump];
         }
-
 
         private void SetupBuffer(int[] array)
         {
@@ -69,8 +48,6 @@ namespace AdventOfCode
             }
             return output;
         }
-
-        
 
         private void DoRearrange()
         {
