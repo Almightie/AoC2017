@@ -1,100 +1,53 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace AdventOfCode
 {
-
-    public class MinMaxList<T> : List<T>
-    {
-        private int _minValue;
-        private int _maxValue;
-
-        public MinMaxList()
-        {
-            _minValue = Int32.MaxValue;
-            _maxValue = Int32.MinValue;
-        }
-
-        public void Add(T value)
-        {
-            int integerValue = Convert.ToInt32(value);
-            if (integerValue > _maxValue)
-            {
-                _maxValue = integerValue;
-            }
-
-            if (integerValue < _minValue)
-            {
-                _minValue = integerValue;
-            }
-
-            base.Add(value);
-        }
-
-        public int GetMinMaxDifference()
-        {
-            return Math.Abs(_maxValue - _minValue);
-        }
-    }
-
     public class DayTwo
     {
-        public int DifferenceBetweenMinAndMaxOfRow(string row)
+        private enum OpCode : int
         {
-            string[] parts = row.Split(';');
-            MinMaxList<int> minMaxList = new MinMaxList<int>();
-
-            for (int i = 0; i < parts.Length; i++)
-            {
-                minMaxList.Add(Convert.ToInt32(parts[i]));
-            }
-
-            return minMaxList.GetMinMaxDifference();
+            Add = 1,
+            Multiply = 2,
+            Exit = 99
         }
 
-        public int SumOfRows(string[] rows)
+        public List<int> ProcessInput(List<int> input)
         {
-            int sum = 0;
-            for (int i = 0; i < rows.Length; i++)
+            
+            for (int instructionPosition = 0; instructionPosition < input.Count; instructionPosition = instructionPosition + 4)
             {
-                sum += DifferenceBetweenMinAndMaxOfRow(rows[i]);
-            }
-            return sum;
-        }
-
-        public int GetDeviseableNumber(string row)
-        {
-            string[] parts = row.Split(';');
-            List<int> list = new List<int>();
-            for (int i = 0; i < parts.Length; i++)
-            {
-                list.Add(Convert.ToInt32(parts[i]));
-            }
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                for (int j = 0; j < list.Count; j++)
+                OpCode opCode = (OpCode)input[instructionPosition];
+                switch (opCode)
                 {
-                    if (i != j)
+                    case OpCode.Add:
                     {
-                        if (list[i] % list[j] == 0)
-                        {
-                            return list[i] / list[j];
-                        } 
+                        int position1 = input[instructionPosition + 1];
+                        int position2 = input[instructionPosition + 2];
+                        int position3 = input[instructionPosition + 3];
+                        input[position3] = input[position1] + input[position2];
                     }
-                }
-            }
-            return 0;
-        }
+                        break;
+                    case OpCode.Multiply:
+                    {
+                        int position1 = input[instructionPosition + 1];
+                        int position2 = input[instructionPosition + 2];
+                        int position3 = input[instructionPosition + 3];
+                        input[position3] = input[position1] * input[position2];
+                    }
+                        break;
+                    case OpCode.Exit:
+                        return input;
+                        break;
 
-        public int SumOfRowsPartTwo(string[] rows)
-        {
-            int sum = 0;
-            for (int i = 0; i < rows.Length; i++)
-            {
-                sum += GetDeviseableNumber(rows[i]);
+                    default:
+                        throw new Exception();
+                }
+
             }
-            return sum;
+            return new List<int>();
         }
     }
 }
