@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Emit;
 
 namespace AdventOfCode
@@ -9,12 +10,17 @@ namespace AdventOfCode
     {
         Add = 1,
         Multiply = 2,
-        OpCode3 = 3,
-        OpCode4 = 4,
+        Input = 3,
+        Output = 4,
+        JumpIfTrue = 5,
+        JumpIfFalse = 6,
+        LessThan = 7,
+        Equals = 8,
         Exit = 99
     }
     public enum ParameterMode : int
     {
+        Undefined = -1,
         PositionMode = 0,
         ImmediateMode = 1
     }
@@ -29,141 +35,76 @@ namespace AdventOfCode
     {
         public void ProcessInput(List<int> input)
         {
-            List<Instruction> instructions = new List<Instruction>();
+            //List<Instruction> instructions = new List<Instruction>();
             int instructionPointer = 0;
             while(instructionPointer < input.Count)
             {
-                OpCode opCode = (OpCode)input[instructionPointer];
+                OpCode opCode = (OpCode) (input[instructionPointer] % 100);
                 Instruction instruction;
                 switch (opCode)
                 {
                     case OpCode.Add:
                     {
                         instruction = new AddInstruction(instructionPointer);
-                    }
                         break;
+                    }
                     case OpCode.Multiply:
                     {
                         instruction = new MultiplyInstruction(instructionPointer);
-                    }
                         break;
+                    }
                     case OpCode.Exit:
                     {
-                        instruction = new ExitInstruction(instructionPointer);
+                        return;
                     }
+                    case OpCode.Output:
+                    {
+                        instruction = new OutputInstruction(instructionPointer);
                         break;
+                    }
+                    case OpCode.Input:
+                    {
+                        instruction = new InputInstruction(instructionPointer);
+                        break;
+                    }
+                    case OpCode.JumpIfTrue:
+                    {
+                        instruction = new JumpIfTrueInstruction(instructionPointer);
+                        break;
+                    }
+                    case OpCode.JumpIfFalse:
+                    {
+                        instruction = new JumpIfFalseInstruction(instructionPointer);
+                        break;
+                    }
+                    case OpCode.LessThan:
+                    {
+                        instruction = new LessThanInstruction(instructionPointer);
+                        break;
+                    }
+                    case OpCode.Equals:
+                    {
+                        instruction = new EqualsInstruction(instructionPointer);
+                        break;
+                    }
 
                     default:
-                        throw new Exception();
+                        throw new Exception("Vervroegd pensioen!");
                 }
 
-                instructionPointer += instruction.ParameterCount;
-                instructions.Add(instruction);
+                instruction.ParseInstructionDefinition(input[instruction.InstructionPointer]);
 
-                if (instruction.ParameterCount == -1)
+                switch (instruction.Process(ref input))
                 {
-                    break;
+                    case ProcessResult.Exit:
+                        break;
                 }
-            }
 
-            foreach (Instruction instruction in instructions)
-            {
-                instruction.Process(ref input);
-            }
-        }
-    }
-
-    public abstract class Instruction
-    {
-        private int _instructionPointer;
-
-        public int ParameterCount
-        {
-            get
-            {
-                return GetParameterCount();
+                instructionPointer += instruction.GetParameterCount() + 1;
             }
         }
 
-        public int InstructionPointer
-        {
-            get
-            {
-                return _instructionPointer;
-            }
-        }
-
-        public Instruction(int instructionPointer)
-        {
-            _instructionPointer = instructionPointer;
-        }
-
-        public abstract int GetParameterCount();
-
-        public abstract ProcessResult Process(ref List<int> instructions);
+      
     }
 
-    public class AddInstruction : Instruction
-    {
-        public AddInstruction(int instructionPointer) : base(instructionPointer)
-        {
-            
-        }
-        
-        public override int GetParameterCount()
-        {
-            return 4;
-        }
-
-        public override ProcessResult Process(ref List<int> instructions)
-        {
-            int position1 = instructions[InstructionPointer + 1];
-            int position2 = instructions[InstructionPointer + 2];
-            int position3 = instructions[InstructionPointer + 3];
-            instructions[position3] = instructions[position1] + instructions[position2];
-
-            return ProcessResult.Continue;
-        }
-    }
-
-    public class MultiplyInstruction : Instruction
-    {
-        public MultiplyInstruction(int instructionPointer) : base(instructionPointer)
-        {
-            
-        }
-
-        public override int GetParameterCount()
-        {
-            return 4;
-        }
-
-        public override ProcessResult Process(ref List<int> instructions)
-        {
-            int position1 = instructions[InstructionPointer + 1];
-            int position2 = instructions[InstructionPointer + 2];
-            int position3 = instructions[InstructionPointer + 3];
-            instructions[position3] = instructions[position1] * instructions[position2];
-
-            return ProcessResult.Continue;
-        }
-    }
-
-    public class ExitInstruction : Instruction
-    {
-        public ExitInstruction(int instructionPointer) : base(instructionPointer)
-        {
-            
-        }
-
-        public override int GetParameterCount()
-        {
-            return -1;
-        }
-
-        public override ProcessResult Process(ref List<int> instructions)
-        {
-            return ProcessResult.Exit;
-        }
-    }
 }

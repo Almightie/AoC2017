@@ -10,12 +10,12 @@ namespace AdventOfCodeTests
     [TestClass]
     public class DayFourTests
     {
-        private IntCodeProcessor _processor;
+        private DayFour _dayFour;
 
         [TestInitialize]
         public void Initialize()
         {
-            _processor = new IntCodeProcessor();
+            _dayFour = new DayFour();
         }
 
         [TestMethod]

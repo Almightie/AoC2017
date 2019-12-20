@@ -42,13 +42,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddInstruction.cs" />
     <Compile Include="DayFive.cs" />
     <Compile Include="DayFour.cs" />
     <Compile Include="DayOne.cs" />
     <Compile Include="DayThree.cs" />
+    <Compile Include="EqualsInstruction.cs" />
+    <Compile Include="JumpIfFalseInstruction.cs" />
+    <Compile Include="JumpIfTrueInstruction.cs" />
+    <Compile Include="LessThanInstruction.cs" />
+    <Compile Include="OutputInstruction.cs" />
+    <Compile Include="Instruction.cs" />
     <Compile Include="IntCodeProcessor.cs" />
+    <Compile Include="MultiplyInstruction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ExitInstruction.cs" />
+    <Compile Include="InputInstruction.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
