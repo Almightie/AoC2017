@@ -10,12 +10,12 @@ namespace AdventOfCodeTests
     [TestClass]
     public class DayTwoTests
     {
-        private DayTwo _dayTwo;
+        private IntCodeProcessor _processor;
 
         [TestInitialize]
         public void TestInit()
         {
-            _dayTwo = new DayTwo();
+            _processor = new IntCodeProcessor();
         }
 
         [TestMethod]
@@ -32,7 +32,46 @@ namespace AdventOfCodeTests
             input[1] = 12;
             input[2] = 2;
 
-            List<int> result = _dayTwo.ProcessInput(input);
+            _processor.ProcessInput(input);
+            Assert.IsTrue(input[0] == 3267740);
+        }
+
+        [TestMethod]
+        public void DayTwoPartTwoTest()
+        {
+            string[] lines = File.ReadAllText("input_2_1.txt").Split(',');
+
+
+            List<int> originalInput = new List<int>();
+            foreach (string line in lines)
+            {
+                originalInput.Add(Convert.ToInt32(line));
+            }
+
+            for (int i = 0; i <= 99; i++)
+            {
+                for (int j = 0; j <= 99; j++)
+                {
+                    List<int> input = new List<int>(originalInput);
+                    input[1] = i;
+                    input[2] = j;
+
+                    try
+                    {
+                        _processor.ProcessInput(input);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+
+                    if (input[0] == 19690720)
+                    {
+                        Console.WriteLine($"100 * {i} + {j} = {(i*100)+j}");
+                    }
+                }
+            }
+
 
         }
     }
